@@ -1,0 +1,166 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Teacher Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .custom-navbar {
+      border-style: solid;
+      border-color: #f8f6f4;
+      border-bottom-color: blueviolet;
+      background-color: #f8f6f4;
+    }
+    .dashboard-card {
+      border-radius: 10px;
+      transition: transform 0.3s;
+    }
+    .dashboard-card:hover {
+      transform: scale(1.05);
+    }
+    .activity-list {
+      list-style: none;
+      padding: 0;
+    }
+    .activity-list li {
+      background: white;
+      padding: 10px;
+      margin: 5px 0;
+      border-radius: 5px;
+      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
+    <div class="container-fluid">
+      <a class="navbar-brand text-dark" href="#">My Website</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link text-dark active" href="teacherhome.html">Home</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-4">
+    <!-- Welcome Section -->
+    <div class="text-center">
+      <h2>Welcome, <span class="text-primary">Teacher</span>!</h2>
+      <p>Manage your students' progress and updates easily.</p>
+    </div>
+
+    <!-- Dashboard Cards -->
+    <div class="row mt-4">
+      <div class="col-md-4">
+        <div class="card dashboard-card p-3 text-center shadow-sm">
+          <h5>Total Students</h5>
+          <h2 class="text-primary" id="studentCount">Loading...</h2>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card dashboard-card p-3 text-center shadow-sm">
+          <h5>Students Needing Attention</h5>
+          <h2 class="text-danger" id="studentsAtRisk">Loading...</h2>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card dashboard-card p-3 text-center shadow-sm">
+          <h5>
+            Not Attempted - 
+            <select id="examSelector" onchange="fetchNotAttempted()" class="form-select form-select-sm d-inline w-auto">
+              <option value="mid1">Mid 1</option>
+              <option value="mid2">Mid 2</option>
+              <option value="semester">Semester</option>
+            </select>
+          </h5>
+          <h2 class="text-warning" id="notAttemptedCount">Loading...</h2>
+        </div>
+      </div>
+    </div>
+    
+
+    <!-- Quick Access Buttons -->
+    <div class="text-center mt-4">
+      <a href="addstudent.html" class="btn btn-primary m-2">Add Student</a>
+      <a href="studentdetails.html" class="btn btn-success m-2">View Student Details</a>
+       
+    </div>
+
+    <!-- Recent Activities -->
+    <div class="mt-4">
+      <h4>Recent Activities</h4>
+      <ul class="activity-list" id="activityList">
+        <li>Loading...</li>
+      </ul>
+    </div>
+  </div>
+ 
+  <script>
+    // Fetch and display the count of not attempted exams based on selected exam
+    function fetchNotAttempted() {
+      const exam = document.getElementById("examSelector").value;
+
+      fetch(`http://localhost:5000/notattempted?exam=${exam}`)
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('notAttemptedCount').textContent = data.count;
+        })
+        .catch(err => {
+          console.error("Error fetching not attempted:", err);
+          document.getElementById('notAttemptedCount').textContent = "Error";
+        });
+    }
+
+    // Load initial data for Mid 1 on page load
+    document.addEventListener("DOMContentLoaded", () => {
+      fetchNotAttempted();
+
+      fetch('http://localhost:5000/studentsatRisk')
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("studentsAtRisk").textContent = data.atRisk;
+        })
+        .catch(err => {
+          console.error("Error fetching at-risk students:", err);
+          document.getElementById("studentsAtRisk").textContent = "Error";
+        });
+
+      fetch('http://localhost:5000/totalstudents')
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("studentCount").textContent = data.total;
+        })
+        .catch(err => {
+          console.error("Error fetching total students:", err);
+          document.getElementById("studentCount").textContent = "Error";
+        });
+
+      fetch('http://localhost:5000/recentactivities')
+        .then(res => res.json())
+        .then(data => {
+          const list = document.getElementById("activityList");
+          list.innerHTML = "";
+          data.forEach(item => {
+            const li = document.createElement("li");
+            li.textContent = item;
+            list.appendChild(li);
+          });
+        })
+        .catch(err => {
+          console.error("Error loading activities:", err);
+        });
+    });
+  </script>
+</body>
+</html>

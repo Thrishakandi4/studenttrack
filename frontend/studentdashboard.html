@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+       background: linear-gradient(135deg, #ece9e6, #ffffff);
+      min-height: 100vh;
+      padding: 30px;
+    }
+    .navbar {
+            width: 100%;
+            height: 15%;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            border-style: solid;
+            border-color: white;
+            border-bottom-color: blueviolet;
+        }
+         
+
+        .navbar h1 {
+            font-size: 22px;
+            color: #333;
+        }
+
+        .navbar a {
+            text-decoration: none;
+            color: #555;
+            font-size: 18px;
+            margin: 0 15px;
+            transition: 0.3s;
+        }
+
+        .navbar a:hover {
+            color: #6a0dad;
+        }
+    .container {
+      background-color: white;
+      margin: 0 auto;
+      margin-top: 100px;
+      border: 2px solid blueviolet;
+      border-radius: 10px;
+      max-width: 700px;
+      padding: 30px;
+    }
+  </style>
+</head>
+<body>
+    <div class="navbar">
+    <h1>Student Dashboard</h1>
+    <div>
+      <a href="loginpage.html">Back</a>
+       
+    </div>
+  </div>
+   
+  <div class="container">
+    <h4 class="text-center text-success">Student Details</h4>
+    <table class="table table-bordered table-striped mt-3" id="detailsTable">
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+  // Load student details from sessionStorage
+  const studentJSON = sessionStorage.getItem("studentDetails");
+
+  if (!studentJSON) {
+    alert("Please login first.");
+    window.location.href = "studentlog.html";
+  } else {
+    const student = JSON.parse(studentJSON);
+    const tableBody = document.querySelector("#detailsTable tbody");
+    tableBody.innerHTML = "";
+
+    for (const [key, value] of Object.entries(student)) {
+      const keyTrimmed = key.trim();
+      const keyLower = keyTrimmed.toLowerCase();
+
+      // Skip id, status, and keys starting with 'v_' (case-insensitive)
+   if (
+  key === "_id" ||
+  key === "__v" ||
+  key === "recentActivities"
+) {
+  continue; // skip these fields
+}
+
+
+      const row = document.createElement("tr");
+      const th = document.createElement("th");
+      th.textContent = keyTrimmed;
+      const td = document.createElement("td");
+      td.textContent = value;
+      row.appendChild(th);
+      row.appendChild(td);
+      tableBody.appendChild(row);
+    }
+  }
+</script>
+
+</body>
+</html>

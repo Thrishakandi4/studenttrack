@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Student Details</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #f8f6f4, #eee);
+    }
+    table {
+      width: 100%;
+      border-radius: 20px;
+      border-collapse: collapse;
+      /*border-spacing: 0 10px; /* space between rows */
+    }
+    th, td {
+      border: 1px solid #6a0dad; 
+      
+      padding: 8px;
+      text-align: left;
+      vertical-align: middle;
+      background-color: white;
+    }
+    table.table-bordered th,
+table.table-bordered td {
+  border: 1px solid #6a0dad !important; /* your purple */
+}
+    .custom-navbar {
+      border-style: solid;
+      border-color: #f8f6f4;
+      border-bottom-color: blueviolet;
+      background-color: #f8f6f4;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    button.update-btn {
+      background-color: #6a0dad;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button.update-btn:hover {
+      background-color: #5a068d;
+    }
+    button.delete-btn {
+      background-color: #d9534f;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button.delete-btn:hover {
+      background-color: #c9302c;
+    }
+    /* Status colors */
+    .status-good {
+      color: green !important;
+      font-weight: bold;
+    }
+    .status-average {
+      color: orange !important;
+      font-weight: bold;
+    }
+    .status-poor {
+      color: red !important;
+      font-weight: bold;
+    }
+    .status-na {
+      color: blue !important;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
+    <div class="container-fluid">
+      <a class="navbar-brand text-dark" href="#">My Website</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link text-dark active" href="teacherhome.html">Back</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-4">
+    <h2 style="color: #6a0dad; font-weight: bold;">Student Details</h2>
+    <button id="deleteAllBtn" class="btn btn-danger mb-3">Delete All Students</button>
+    <table class="table table-bordered mt-4" id="edit">
+      <thead>
+        <tr>
+          <th>Student ID</th>
+          <th>Student Name</th>
+          <th>Parent Email</th>
+          <th>Mid1</th>
+          <th>Mid1 Status</th>
+          <th>Mid2</th>
+          <th>Mid2 Status</th>
+          <th>Semester</th>
+          <th>Semester Status</th>
+          <th>Credits</th>
+          <th>Update</th>
+          <th>Delete</th>
+          <th>Send Message</th>
+        </tr>
+      </thead>
+      <tbody id="studentTable"></tbody>
+    </table>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      fetchStudents();
+
+      document.getElementById("deleteAllBtn").addEventListener("click", () => {
+        if (confirm("Are you sure you want to delete ALL students?")) {
+          deleteAllStudents();
+        }
+      });
+    });
+
+    function getStatusClass(status) {
+      if (!status) return "status-na";
+      status = status.trim().toLowerCase();
+      if (status === "good") return "status-good";
+      if (status === "average") return "status-average";
+      if (status === "poor") return "status-poor";
+      return "status-na";
+    }
+
+    function fetchStudents() {
+      fetch("http://localhost:5000/studentdetails")
+        .then(response => response.json())
+        .then(data => {
+          const tableBody = document.getElementById("studentTable");
+          tableBody.innerHTML = "";
+
+          data.forEach(student => {
+            const row = document.createElement("tr");
+
+            const mid1StatusClass = getStatusClass(student.mid1status);
+            const mid2StatusClass = getStatusClass(student.mid2status);
+            const semesterStatusClass = getStatusClass(student.semesterstatus);
+
+            row.innerHTML = `
+              <td>${student.studentid || ""}</td>
+              <td>${student.studentname || ""}</td>
+              <td>${student.parentemail || ""}</td>
+              <td><input type="text" value="${student.mid1 || ""}" class="form-control mid1-input" /></td>
+              <td class="${mid1StatusClass}">${student.mid1status || "Not Available"}</td>
+              <td><input type="text" value="${student.mid2 || ""}" class="form-control mid2-input" /></td>
+              <td class="${mid2StatusClass}">${student.mid2status || "Not Available"}</td>
+              <td><input type="text" value="${student.semester || ""}" class="form-control semester-input" /></td>
+              <td class="${semesterStatusClass}">${student.semesterstatus || "Not Available"}</td>
+              <td>${student.credits || 0}</td>
+              <td><button class="update-btn">Update</button></td>
+              <td><button class="delete-btn ms-2">Delete</button></td>
+              <td><button class="sendmsg-btn btn btn-primary btn-sm">Send Message</button></td>
+            `;
+
+            // Send Message button event
+            row.querySelector(".sendmsg-btn").addEventListener("click", () => {
+              sendMessageToParent(student.parentemail, student.studentname);
+            });
+
+            // Update button event
+            row.querySelector(".update-btn").addEventListener("click", () => {
+              const updatedMid1 = row.querySelector(".mid1-input").value;
+              const updatedMid2 = row.querySelector(".mid2-input").value;
+              const updatedSemester = row.querySelector(".semester-input").value;
+
+              updateStudent(student._id, {
+                mid1: updatedMid1,
+                mid2: updatedMid2,
+                semester: updatedSemester,
+              });
+            });
+
+            // Delete button event
+            row.querySelector(".delete-btn").addEventListener("click", () => {
+              if (confirm(`Delete student ${student.studentname}?`)) {
+                deleteStudent(student._id);
+              }
+            });
+
+            tableBody.appendChild(row);
+          });
+        })
+        .catch(error => console.error("Error fetching students:", error));
+    }
+
+    /** function sendMessageToParent(email, studentName) {
+      if (!email) {
+        alert("Parent email not available.");
+        return;
+      }
+
+      const message = `Hello, this is an update regarding your child ${studentName}. Please check the student tracking system for latest progress.`;
+
+      fetch("http://localhost:5000/sendparentemail", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: email,
+          subject: `Update for ${studentName}`,
+          message: message
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message || "Email sent successfully!");
+      })
+      .catch(err => {
+        alert("Failed to send email: " + err.message);
+      });
+    }**/
+
+   function getColorForStatus(status) {
+  status = status ? status.toLowerCase() : "";
+  if (status === "good") return "green";
+  if (status === "average") return "orange";
+  if (status === "poor") return "red";
+  return "blue"; // default for NA or unknown
+}
+
+function sendMessageToParent(email, studentName) {
+  if (!email) {
+    alert("Parent email not available.");
+    return;
+  }
+
+  // Find the row in the table for the given studentName
+  const rows = [...document.querySelectorAll("#studentTable tr")];
+  const row = rows.find(r => r.innerText.includes(studentName));
+  if (!row) {
+    alert("Student row not found.");
+    return;
+  }
+
+  const cells = row.querySelectorAll("td");
+
+  const mid1 = cells[3].querySelector("input").value || "N/A";
+  const mid1Status = cells[4].innerText.trim() || "N/A";
+  const mid2 = cells[5].querySelector("input").value || "N/A";
+  const mid2Status = cells[6].innerText.trim() || "N/A";
+  const semester = cells[7].querySelector("input").value || "N/A";
+  const semesterStatus = cells[8].innerText.trim() || "N/A";
+  const credits = cells[9].innerText || "0";
+
+  // Ask which exam to send update for
+  let selectedExam = prompt("Which exam update are you notifying? (mid1 / mid2 / semester)").toLowerCase().trim();
+
+  let examMessage = "";
+
+  if (selectedExam === "mid1") {
+    examMessage = `Mid 1 Marks: ${mid1} <span style="color:${getColorForStatus(mid1Status)};">(${mid1Status})</span>`;
+  } else if (selectedExam === "mid2") {
+    examMessage = `Mid 2 Marks: ${mid2} <span style="color:${getColorForStatus(mid2Status)};">(${mid2Status})</span>`;
+  } else if (selectedExam === "semester") {
+    examMessage = `Semester Marks: ${semester} <span style="color:${getColorForStatus(semesterStatus)};">(${semesterStatus})</span>`;
+  } else {
+    alert("Invalid input. Please type mid1, mid2, or semester.");
+    return;
+  }
+
+  // Construct HTML message with colored status
+  const message = `
+    <p>Hello, this is an update regarding your child <strong>${studentName}</strong>.</p>
+    <p> ${examMessage}</p>
+    <p> Total Credits Earned: <strong>${credits}</strong></p>
+    <p>Thank you for staying involved in your child’s progress.</p>
+  `;
+
+  // Send POST request to backend to send email (assuming backend accepts 'message' as HTML)
+  fetch("http://localhost:5000/sendparentemail", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      to: email,
+      subject: `Update for ${studentName}`,
+      message: message,
+      isHtml: true  // optional flag for backend if it needs it
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert(data.message || "Email sent successfully!");
+  })
+  .catch(err => {
+    alert("Failed to send email: " + err.message);
+  });
+}
+
+    function updateStudent(id, updatedFields) {
+      fetch(`http://localhost:5000/updatestudent/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedFields),
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.json().then(err => {
+            throw new Error(err.message || "Update failed");
+          });
+        }
+        return response.json();
+      })
+      .then(data => {
+        alert(data.message || "Updated successfully!");
+        fetchStudents();
+      })
+      .catch(error => {
+        alert("Failed to update student: " + error.message);
+      });
+    }
+
+    function deleteStudent(id) {
+      fetch(`http://localhost:5000/deletestudent/${id}`, { method: "DELETE" })
+        .then(res => {
+          if (!res.ok) throw new Error("Delete failed");
+          return res.json();
+        })
+        .then(data => {
+          alert(data.message || "Student deleted.");
+          fetchStudents();
+        })
+        .catch(err => alert("Failed to delete student: " + err.message));
+    }
+
+    function deleteAllStudents() {
+      fetch(`http://localhost:5000/deleteallstudents`, { method: "DELETE" })
+        .then(res => {
+          if (!res.ok) throw new Error("Delete all failed");
+          return res.json();
+        })
+        .then(data => {
+          alert(data.message || "All students deleted.");
+          fetchStudents();
+        })
+        .catch(err => alert("Failed to delete all students: " + err.message));
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
