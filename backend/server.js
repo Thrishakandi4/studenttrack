@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const path = require("path");
 const bcrypt = require("bcrypt");
+require("dotenv").config();
 const nodemailer = require("nodemailer");
 
 const app = express();
@@ -14,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(frontendPath));
 
-mongoose.connect("mongodb://localhost:27017/studenttracking", {
+mongoose.connect('mongodb+srv://thrishakandi4:COS8KB1wW9hB0BtT@cluster0.08aogbq.mongodb.net/studenttracking?retryWrites=true&w=majority&appName=Cluster0', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
@@ -46,8 +47,8 @@ const Student = mongoose.model("Student", studentSchema);
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "abhisheshkandi31@gmail.com",
-    pass: "xvodmdudrcmrdipj",
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
