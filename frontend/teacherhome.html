@@ -111,7 +111,7 @@
     function fetchNotAttempted() {
       const exam = document.getElementById("examSelector").value;
 
-      fetch(`http://localhost:5000/notattempted?exam=${exam}`)
+      fetch(`https://studenttrack-08b0.onrender.com/notattempted?exam=${exam}`)
         .then(res => res.json())
         .then(data => {
           document.getElementById('notAttemptedCount').textContent = data.count;
@@ -126,7 +126,7 @@
     document.addEventListener("DOMContentLoaded", () => {
       fetchNotAttempted();
 
-      fetch('http://localhost:5000/studentsatRisk')
+      fetch('https://studenttrack-08b0.onrender.com/studentsatRisk')
         .then(res => res.json())
         .then(data => {
           document.getElementById("studentsAtRisk").textContent = data.atRisk;
@@ -136,7 +136,7 @@
           document.getElementById("studentsAtRisk").textContent = "Error";
         });
 
-      fetch('http://localhost:5000/totalstudents')
+      fetch('https://studenttrack-08b0.onrender.com/totalstudents')
         .then(res => res.json())
         .then(data => {
           document.getElementById("studentCount").textContent = data.total;
@@ -146,7 +146,7 @@
           document.getElementById("studentCount").textContent = "Error";
         });
 
-      fetch('http://localhost:5000/recentactivities')
+      fetch('https://studenttrack-08b0.onrender.com/recentactivities')
         .then(res => res.json())
         .then(data => {
           const list = document.getElementById("activityList");
