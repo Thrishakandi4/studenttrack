@@ -121,7 +121,7 @@
                 password: document.querySelector("input[name='password']").value.trim()
             };
 
-            fetch("http://localhost:5000/teacherlog", {
+            fetch("https://studenttrack-08b0.onrender.com/teacherlog", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData)
