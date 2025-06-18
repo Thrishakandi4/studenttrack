@@ -10,6 +10,17 @@
 main.container {
   margin-top: 140px; /* make space below navbar */
 }
+/* Fix for navbar overlapping content */
+body {
+  padding-top: 100px; /* matches navbar height */
+}
+
+/* Optional: Slight extra margin for smaller screens */
+@media screen and (max-width: 600px) {
+  body {
+    padding-top: 120px;
+  }
+}
 
 /* Fix Back link alignment */
 .navbar a {
