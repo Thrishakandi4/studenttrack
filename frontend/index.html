@@ -11,6 +11,18 @@
             box-sizing: border-box;
             font-family: 'Arial', sans-serif;
         }
+        /* Fix: prevent content from hiding behind navbar */
+body {
+    padding-top: 100px;
+}
+
+/* Optional: add more space for smaller devices */
+@media screen and (max-width: 600px) {
+    body {
+        padding-top: 120px;
+    }
+}
+
 
         body {
             background: linear-gradient(135deg, #ece9e6, #ffffff);
