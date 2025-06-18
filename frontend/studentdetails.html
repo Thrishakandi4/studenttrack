@@ -138,7 +138,7 @@ table.table-bordered td {
     }
 
     function fetchStudents() {
-      fetch("http://localhost:5000/studentdetails")
+      fetch("https://studenttrack-08b0.onrender.com/studentdetails")
         .then(response => response.json())
         .then(data => {
           const tableBody = document.getElementById("studentTable");
@@ -281,7 +281,7 @@ function sendMessageToParent(email, studentName) {
   `;
 
   // Send POST request to backend to send email (assuming backend accepts 'message' as HTML)
-  fetch("http://localhost:5000/sendparentemail", {
+  fetch("https://studenttrack-08b0.onrender.com/sendparentemail", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -301,7 +301,7 @@ function sendMessageToParent(email, studentName) {
 }
 
     function updateStudent(id, updatedFields) {
-      fetch(`http://localhost:5000/updatestudent/${id}`, {
+      fetch(`https://studenttrack-08b0.onrender.com/updatestudent/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedFields),
@@ -324,7 +324,7 @@ function sendMessageToParent(email, studentName) {
     }
 
     function deleteStudent(id) {
-      fetch(`http://localhost:5000/deletestudent/${id}`, { method: "DELETE" })
+      fetch(`https://studenttrack-08b0.onrender.com/deletestudent/${id}`, { method: "DELETE" })
         .then(res => {
           if (!res.ok) throw new Error("Delete failed");
           return res.json();
@@ -337,7 +337,7 @@ function sendMessageToParent(email, studentName) {
     }
 
     function deleteAllStudents() {
-      fetch(`http://localhost:5000/deleteallstudents`, { method: "DELETE" })
+      fetch(`https://studenttrack-08b0.onrender.com/deleteallstudents`, { method: "DELETE" })
         .then(res => {
           if (!res.ok) throw new Error("Delete all failed");
           return res.json();
