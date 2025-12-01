@@ -5,7 +5,6 @@ const path = require("path");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
 const nodemailer = require("nodemailer");
-
 const app = express();
 const PORT = process.env.PORT || 5000;
 
