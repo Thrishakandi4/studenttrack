@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(frontendPath));
 
-mongoose.connect('mongodb+srv://thrishakandi4_db_user:3shakandi%402004@cluster0.w7ay0q1.mongodb.net/STS?retryWrites=true&w=majority&appName=Cluster0', {
+mongoose.connect('mongodb+srv://thrishakandi4_db_user:3shakandi2004@cluster0.otaodme.mongodb.net/StudentTrackingSystem?retryWrites=true&w=majority&appName=Cluster0', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
