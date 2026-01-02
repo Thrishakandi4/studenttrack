@@ -18,6 +18,7 @@ mongoose.connect('mongodb+srv://thrishakandi4_db_user:3shakandi2004@cluster0.ota
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
+ 
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
